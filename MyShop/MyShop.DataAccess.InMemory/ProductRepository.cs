@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 using System.Runtime.Caching;
 using MyShop.Core.Models;
 
+/// <summary>
+/// 1.product repository is created in the dataaccess directory.
+/// 2.
+/// </summary>
+
 namespace MyShop.DataAccess.InMemory
 {
 
