@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MyShop.Core.Models;
+using MyShop.Core.ViewModel;
 using MyShop.DataAccess.InMemory;
 
 /// <summary>
@@ -16,10 +17,12 @@ namespace MyShop.WebUI.Controllers
     public class ProductManagerController : Controller
     {
         ProductRepository context;
+        ProductCategoryRepository productCategories;
 
-        public ProductManagerController()
+        public ProductManagerController()               // Initialise the ProductRepository and ProductManagerRepository
         {
             context = new ProductRepository();
+            productCategories = new ProductCategoryRepository();
         }
 
 
@@ -37,10 +40,20 @@ namespace MyShop.WebUI.Controllers
             return View(products);
         }
 
+
+        /// <summary>
+        /// We want to create a drop down category list when we want to create or edit a product
+        /// viewmodel - is a view where we can control what the user sees. Viewmodel is similiar to a model where you define the 
+        /// variables
+        /// </summary>
+       
         public ActionResult Create()
         {
-            Product product = new Product();
-            return View(product);
+            ProductManagerViewModel viewModel = new ProductManagerViewModel();
+
+            viewModel.Product = new Product();          // An empty Product
+            viewModel.ProductCategories = productCategories.Collection();           // Product Category from the database
+            return View(viewModel);                                                 // Return viewmodel instead of the product
         }
 
         [HttpPost]
@@ -61,6 +74,7 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Edit(string Id)
         {
+
             Product product = context.Find(Id);
             if (product == null)
             {
@@ -68,7 +82,12 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
-                return View(product);
+                ProductManagerViewModel viewModel = new ProductManagerViewModel();
+                viewModel.Product = product;
+                viewModel.ProductCategories = productCategories.Collection();
+
+                return View(viewModel);
+
             }
         }
 
@@ -88,7 +107,7 @@ namespace MyShop.WebUI.Controllers
                     return View(product);
                 }
 
-                productToEdit.Category = product.Category;
+                //productToEdit.Category = product.Category;
                 productToEdit.Description = product.Description;
                 productToEdit.Image = product.Image;
                 productToEdit.Name = product.Name;
